@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class RoundManager : Photon.MonoBehaviour
 {
     public GameRound currentRound;
-
+    
     [RPC]
     public void RespawnCharacter()
     {
@@ -65,5 +65,30 @@ public class RoundManager : Photon.MonoBehaviour
     {
         if (PhotonNetwork.isMasterClient)
             photonView.RPC("InitRound", PhotonTargets.AllBuffered);
+    }
+
+    public void StartTargetCountdown()
+    {
+        
+    }
+    public void EndTargetCountdown()
+    {
+
+    }
+
+    public void TargetHacked()
+    {
+        if (PhotonNetwork.isMasterClient)
+        {
+
+        }
+    }
+
+    void Update()
+    {
+        if (PhotonNetwork.isMasterClient)
+        {
+            
+        }
     }
 }
