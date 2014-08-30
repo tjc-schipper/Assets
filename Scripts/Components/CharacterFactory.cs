@@ -10,6 +10,7 @@ public class CharacterFactory : Photon.MonoBehaviour
     public GameObject GetSpy()
     {
         GameObject spy = GetBaseSpy();
+        spy.GetComponentInChildren<Renderer>().material.color = Color.blue;
         return spy;
     }
     private GameObject GetBaseSpy()
@@ -21,6 +22,7 @@ public class CharacterFactory : Photon.MonoBehaviour
     public GameObject GetGuard()
     {
         GameObject guard = GetSpy();
+        guard.GetComponentInChildren<Renderer>().material.color = Color.green;
         return guard;
     }
 }

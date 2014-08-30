@@ -39,7 +39,12 @@ public class SpyState : Photon.MonoBehaviour
     public float syncTime = 0f;        // Time since last update received
     public float SyncLerpValue
     {
-        get { return syncTime / syncDelay; }
+        get 
+        {
+            if (!syncDelay.Equals(0f))
+                return syncTime / syncDelay;
+            else return 0f;
+        }
     }
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -63,12 +68,15 @@ public class SpyState : Photon.MonoBehaviour
             Velocity = (Vector3)stream.ReceiveNext();
             Angle = (float)stream.ReceiveNext();
 
+            Debug.Log("Received - P: " + Position.ToString() + " - A : " + Angle.ToString());
+            
             // Fire basic movement events
             if (OnSyncPositionReceived != null)
                 OnSyncPositionReceived(Position);
+            
             if (OnSyncAngleReceived != null)
                 OnSyncAngleReceived(Angle);
-
+            
             // Reset interpolation variables
             syncTime = 0f;
             syncDelay = Time.time - lastSyncTime;

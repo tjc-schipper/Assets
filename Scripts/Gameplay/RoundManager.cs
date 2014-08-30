@@ -27,7 +27,7 @@ public class RoundManager : Photon.MonoBehaviour
     [RPC]
     public void InitRound()
     {
-        ResetSpawnPoints();
+		ResetSpawnPoints();
         RespawnCharacter();
         currentRound = new GameRound();
         currentRound.started = true;
@@ -56,8 +56,14 @@ public class RoundManager : Photon.MonoBehaviour
         return new List<SpawnPoint>(spawns);
     }
 
+    /// <summary>
+    ///  Called by the (local) master client to start the round. Tells other clients to do the same
+    ///  Note: players list must be intact at this point!
+    /// </summary>
+    /// <param name="players"></param>
     public void StartNewRound(List<Player> players)
     {
-        photonView.RPC("InitRound", PhotonTargets.AllBuffered);
+        if (PhotonNetwork.isMasterClient)
+            photonView.RPC("InitRound", PhotonTargets.AllBuffered);
     }
 }

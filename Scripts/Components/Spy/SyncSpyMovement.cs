@@ -9,6 +9,7 @@ public class SyncSpyMovement : Movement
     private Vector3 endPos;
     private float startAngle;
     private float endAngle;
+    private const float lerpFactor = 0.5f;
 
     void Start()
     {
@@ -31,24 +32,32 @@ public class SyncSpyMovement : Movement
     void Update()
     {
         Vector3 newPos = Vector3.Lerp(
-            startPos,
+            Position,
             endPos,
-            state.SyncLerpValue
+            lerpFactor
             );
         Position = newPos;
 
         float newAngle = Mathf.Lerp(
-            startAngle,
+            Angle,
             endAngle,
-            state.SyncLerpValue
+            lerpFactor
             );
         Angle = newAngle;
     }
 
     private void SyncPositionHandler(Vector3 p)
     {
-        endPos = p;
-        startPos = Position;
+        if (p.IsNaN())
+        {
+            Debug.LogError("Invalid/NaN position vector synced. Ignoring.");
+        }
+        else
+        {
+            endPos = p;
+            startPos = Position;
+            Debug.Log("Updated: endpos=" + endPos.ToString() + " - startpos=" + startPos.ToString());
+        }
     }
 
     private void SyncAngleHandler(float a)

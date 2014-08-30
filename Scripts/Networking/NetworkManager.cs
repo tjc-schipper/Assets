@@ -83,17 +83,16 @@ public class NetworkManager : Photon.MonoBehaviour
     [RPC]
     public void CreatePlayerObjects()
     {
-        // Take the currently connected PhotonPlayers and create matching Player objects for them
+		// Take the currently connected PhotonPlayers and create matching Player objects for them
         players.Clear();
-        int playersInSpies = 0;
+        
         for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
         {
             PhotonPlayer p = PhotonNetwork.playerList[i];
 
             Player.PlayerTeams team;
-            if (playersInSpies < PhotonNetwork.room.maxPlayers)
+            if (p.isMasterClient)
             {
-                playersInSpies++;
                 team = Player.PlayerTeams.SPY;
             }
             else

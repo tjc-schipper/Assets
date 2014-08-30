@@ -30,6 +30,7 @@ public class Movement : Photon.MonoBehaviour
         set
         {
             rigidbody.MovePosition(value);
+            state.Position = value;
         }
     }
 
@@ -42,6 +43,7 @@ public class Movement : Photon.MonoBehaviour
         set
         {
             rigidbody.MoveRotation(value);
+            state.Angle = Angle;
         }
     }
 
@@ -54,6 +56,7 @@ public class Movement : Photon.MonoBehaviour
         set
         {
             Rotation = AngleToRotation(value);
+            state.Angle = value;
         }
     }
 
