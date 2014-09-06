@@ -56,7 +56,7 @@ public class SyncSpyMovement : Movement
         {
             endPos = p;
             startPos = Position;
-            Debug.Log("Updated: endpos=" + endPos.ToString() + " - startpos=" + startPos.ToString());
+            //Debug.Log("Updated: endpos=" + endPos.ToString() + " - startpos=" + startPos.ToString());
         }
     }
 

@@ -4,22 +4,29 @@ using System.Collections.Generic;
 
 public class RoundManager : Photon.MonoBehaviour
 {
+    public event TargetZone.TargetZoneEvent HackStarted;
+    public event TargetZone.TargetZoneEvent HackStopped;
+    public event TargetZone.TargetZoneEvent HackPercentageChanged;
+    public event TargetZone.TargetZoneEvent HackCompleted;
+    
+    
+    
     public GameRound currentRound;
     
     [RPC]
     public void RespawnCharacter()
     {
         CharacterFactory fact = GameObject.FindObjectsOfType<CharacterFactory>()[0];
-        SpawnPoint spawn = GetSpawnPoints(NetworkManager.ownPlayer.PlayerTeam)[0];
+        SpawnPoint spawn = GetSpawnPoints(NetworkManager.localPlayer.PlayerTeam)[0];
 
         // Create character
-        if (NetworkManager.ownPlayer.PlayerTeam == Player.PlayerTeams.GUARD)
-            NetworkManager.ownPlayer.Character = fact.GetGuard();
+        if (NetworkManager.localPlayer.PlayerTeam == Player.PlayerTeams.GUARD)
+            NetworkManager.localPlayer.Character = fact.GetGuard();
         else
-            NetworkManager.ownPlayer.Character = fact.GetSpy();
+            NetworkManager.localPlayer.Character = fact.GetSpy();
 
         // Move to spawn point
-        SpyMovement move = NetworkManager.ownPlayer.Character.GetComponent<SpyMovement>();
+        SpyMovement move = NetworkManager.localPlayer.Character.GetComponent<SpyMovement>();
         move.Position = spawn.transform.position;
         spawn.Available = false;
     }
@@ -67,28 +74,51 @@ public class RoundManager : Photon.MonoBehaviour
             photonView.RPC("InitRound", PhotonTargets.AllBuffered);
     }
 
-    public void StartTargetCountdown()
+    
+    public void SetHackingPercentUpdate(TargetZone tz, float percentComplete)
     {
+        photonView.RPC("OnHackPercentageChange", PhotonTargets.OthersBuffered, percentComplete);
+        OnHackPercentageChange(percentComplete);
+    }
+    public void SetHackingStopped(TargetZone tz, float percentComplete)
+    {
+        photonView.RPC("OnHackStopped", PhotonTargets.OthersBuffered, percentComplete);
+        OnHackStopped(percentComplete);
+    }
+    public void SetHackingStarted(TargetZone tz, float percentComplete)
+    {
+        photonView.RPC("OnHackStarted", PhotonTargets.OthersBuffered, percentComplete);
+        OnHackStarted(percentComplete);
+    }
+    public void SetHackCompleted(TargetZone tz)
+    {
+        photonView.RPC("OnHackCompleted", PhotonTargets.OthersBuffered);
+        OnHackCompleted();
         
     }
-    public void EndTargetCountdown()
+    [RPC]
+    public void OnHackPercentageChange(float percentComplete)
     {
-
+        if (HackPercentageChanged != null)
+            HackPercentageChanged(null, percentComplete);
+    }
+    [RPC]
+    public void OnHackStopped(float percentComplete)
+    {
+        if (HackStopped != null)
+            HackStopped(null, percentComplete);
+    }
+    [RPC]
+    public void OnHackStarted(float percentComplete)
+    {
+        if (HackStarted != null)
+            HackStarted(null, percentComplete);
+    }
+    [RPC]
+    public void OnHackCompleted()
+    {
+        if (HackCompleted != null)
+            HackCompleted(null, 1.0f);
     }
 
-    public void TargetHacked()
-    {
-        if (PhotonNetwork.isMasterClient)
-        {
-
-        }
-    }
-
-    void Update()
-    {
-        if (PhotonNetwork.isMasterClient)
-        {
-            
-        }
-    }
 }

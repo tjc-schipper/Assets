@@ -4,77 +4,73 @@ using System.Collections;
 public class TargetZone : MonoBehaviour
 {
 
-    public event StealthEventTypes.VoidEvent HackFinished;
-    public event StealthEventTypes.VoidEvent HackStopped;
-    public event StealthEventTypes.VoidEvent HackStarted;
+    public event TargetZoneEvent HackCompleted;
+    public event TargetZoneEvent HackStopped;
+    public event TargetZoneEvent HackStarted;
+    public delegate void TargetZoneEvent(TargetZone tz, float percent);
 
-    private bool hackCompleted = false;
-    private bool beingHacked = false;
-    public bool BeingHacked
+    public Player playerHacking;
+    bool _beingHacked;
+    public bool beingHacked
     {
-        get { return beingHacked; }
+        get { return _beingHacked; }
         set
         {
-            if (beingHacked != value)
+            if (_beingHacked != value)
             {
+                _beingHacked = value;
+                tickTimer = 0f;
                 if (value)
                 {
-                    beingHacked = true;
-                    if (HackStarted != null)
-                        HackStarted();
+                    if (HackStarted != null) HackStarted(this, hackProgress);
+                    DEBUG_ChangeModelColor(true);
                 }
                 else
                 {
-                    beingHacked = false;
-                    if (!hackCompleted)
-                        if (HackStopped != null)
-                            HackStopped();
+                    if (HackStopped != null) HackStopped(this, hackProgress);
+                    DEBUG_ChangeModelColor(false);
                 }
-
-                tickTimer = 0f;
             }
         }
     }
-    public Player playerHacking;
     public float hackProgress = 0f;
+    private bool hackCompleted = false;
 
-    public float timeBetweenHackTicks = 1000f;
-    public float timeBetweenHackLoss = 2000f;
+    public float timeBetweenHackTicks = 1f;
+    private float lossStepSize = 0.1f;
     private float tickTimer = 0f;
 
     void Update()
     {
-        // Actively being hacked
-        if (beingHacked)
+        // Decreasing if not being hacked
+        if (!hackCompleted && !beingHacked && hackProgress > 0f)
         {
             tickTimer += Time.deltaTime;
             if (tickTimer >= timeBetweenHackTicks)
             {
-                hackProgress += 0.1f;
+                hackProgress -= lossStepSize;
                 tickTimer = 0f;
             }
-
-            if (hackProgress >= 1f) // Check if hack complete
-            {
-                hackCompleted = true;
-                if (HackFinished != null)
-                {
-                    HackFinished();
-                }
-            }
         }
-        // Just idly decreasing
-        else
+        if (beingHacked)
         {
-            if (hackProgress > 0f)
+            if (hackProgress >= 1f)
             {
-                tickTimer += Time.deltaTime;
-                if (tickTimer >= timeBetweenHackLoss)
-                {
-                    hackProgress -= 0.1f;
-                    tickTimer = 0f;
-                }
+                if (HackCompleted != null) HackCompleted(this, hackProgress);
             }
         }
     }
+
+    void DEBUG_ChangeModelColor(bool hacking)
+    {
+        if (hacking)
+        {
+            renderer.material.color = new Color32(200, 220, 255, 100);
+        }
+        else
+        {
+            renderer.material.color = new Color32(255, 220, 200, 100);
+        }
+    }
+
 }

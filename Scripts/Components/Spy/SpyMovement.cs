@@ -25,7 +25,7 @@ public class SpyMovement : Movement
     {
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        Vector3 input = new Vector3(horizontalInput, 0f, verticalInput);
+        Vector3 input = new Vector3(horizontalInput, verticalInput, 0f);
 
         if (post.Covering)
             HandleInput_Cover(input);

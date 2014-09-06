@@ -8,5 +8,6 @@ public static partial class StealthEventTypes {
     public delegate void BoolEvent(bool b);
     public delegate void StringEvent(string s);
     public delegate void VoidEvent();
+    public delegate void PlayerEvent(Player p);
 
 }

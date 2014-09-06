@@ -2,6 +2,9 @@
 using System;
 using System.Collections;
 
+/// <summary>
+/// Coordinate system: X/Y, Z is up. 0Angle = +x, CCW.
+/// </summary>
 public class Movement : Photon.MonoBehaviour
 {
 
@@ -90,21 +93,21 @@ public class Movement : Photon.MonoBehaviour
     {
         // Convention: +x is 0, CCW. Unit circle
         Vector3 dir = AngleToDirection(a);
-        return Quaternion.LookRotation(dir, transform.up);
+        return Quaternion.LookRotation(dir, transform.forward);
     }
     protected Vector3 AngleToDirection(float a)
     {
         float x, z;
         return new Vector3(
             Mathf.Sin(a),
-            0f,
-            Mathf.Cos(a)
+            Mathf.Cos(a),
+            0f
             );
     }
 
     protected float RotationToAngle(Quaternion q)
     {
-        return q.eulerAngles.y;
+        return q.eulerAngles.z;
     }
     protected Vector3 RotationToDirection(Quaternion q)
     {

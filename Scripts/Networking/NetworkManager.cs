@@ -9,7 +9,7 @@ public class NetworkManager : Photon.MonoBehaviour
     RoomInfo[] roomsList;
     public GameObject playerPrefab;
     List<Player> players;
-    public static Player ownPlayer;
+    public static Player localPlayer;
 
     void OnGUI()
     {
@@ -102,7 +102,7 @@ public class NetworkManager : Photon.MonoBehaviour
 
             Player newPlayer = new Player(p.name, p.ID, team);
             if (PhotonNetwork.player == p)
-                NetworkManager.ownPlayer = newPlayer;
+                NetworkManager.localPlayer = newPlayer;
             players.Add(newPlayer);
         }
     }
